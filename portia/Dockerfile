@@ -15,7 +15,7 @@ WORKDIR /app
 RUN set -xe \
     && apt-get update \
     && apt-get install -y git \
-    && git clone https://github.com/scrapinghub/portia.git . \
+    && git clone https://github.com/scrapinghub/portia/tree/nui-develop.git . \
     && apt-get remove -y git \
     && rm -rf /var/lib/apt/list/*
 

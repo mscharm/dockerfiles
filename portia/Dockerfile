@@ -4,8 +4,14 @@
 
 FROM ubuntu:14.04
 
-WORKDIR /app
+RUN apt-get update
+RUN apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' |chpasswd
+RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
+WORKDIR /app
 RUN set -xe \
     && apt-get update \
     && apt-get install -y git \
@@ -22,8 +28,8 @@ RUN /app/provision.sh \
 
 ENV PYTHONPATH /app/slybot:/app/slyd
 
-EXPOSE 9001
+EXPOSE 9001 22
 
 WORKDIR /app/slyd
 
-CMD service nginx start; bin/slyd -p 9002 -r /app/slyd/dist
+CMD service nginx start; bin/slyd -p 9002 -r /app/slyd/dist; /usr/sbin/sshd -D
